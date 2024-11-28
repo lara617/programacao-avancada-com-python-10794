@@ -90,7 +90,7 @@ def home_page():
 @app.route('/login')
 def login():
     return redirect(
-        "https:/dev-tw7648ler51b10s7/authorize?response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=https://programacao-avancada-com-python-10794.vercel.app/login/callback"
+        "https://dev-tw7648ler51b10s7.auth0.com/authorize?response_type=code&client_id=g2xJF8I0C3CWAm9DicdayFUpHjXAQ0oI&redirect_uri=https://programacao-avancada-com-python-10794.vercel.app/login/callback"
     )
 
 
@@ -98,7 +98,7 @@ def login():
 def logout():
     # Redireciona o usuário para o logout no Auth0
     return redirect(
-        'https://dev-tw7648ler51b10s7/v2/logout?returnTo=https://programacao-avancada-com-python-10794.vercel.app/login'
+        'https://dev-tw7648ler51b10s7.auth0.com/v2/logout?returnTo=https://programacao-avancada-com-python-10794.vercel.app/login'
     )
 
 
