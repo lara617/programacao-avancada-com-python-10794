@@ -89,11 +89,16 @@ def home_page():
 
 @app.route('/login')
 def login():
-    return redirect("https://programacao-avancada-com-python-10794-38kmwqf65.vercel.app/login")    # Certifique-se de que o server.py está rodando
+    return redirect("https://programacao-avancada-com-python-10794-38kmwqf65.vercel.app/login")
 
 @app.route('/logout')
 def logout():
-    return redirect("http://127.0.0.1:3000/logout")
+    # Inicia o processo de logout no Auth0
+    # Redireciona o usuário para o endpoint de logout do Auth0
+    return redirect(
+        'https://YOUR_DOMAIN/v2/logout?returnTo=https://programacao-avancada-com-python-10794-38kmwqf65.vercel.app/login'
+    )
+
 
 # Endpoint para criação de usuários (POST)
 @app.route('/usuarios', methods=['POST'])
