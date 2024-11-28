@@ -1,5 +1,7 @@
 import os
 from dotenv import load_dotenv
+import requests
+import json
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from graficos import create_bar_chart, create_memory_chart  # Corrigido para importar ambas as funções
@@ -7,16 +9,11 @@ from server import app as server_app
 # Carregar as variáveis do .env
 load_dotenv()
 
-
 # Testa se as variáveis estão carregadas
 print("AUTH0_CLIENT_ID:", os.getenv("AUTH0_CLIENT_ID"))
 print("AUTH0_CLIENT_SECRET:", os.getenv("AUTH0_CLIENT_SECRET"))
 print("AUTH0_DOMAIN:", os.getenv("AUTH0_DOMAIN"))
 print("APP_SECRET_KEY:", os.getenv("APP_SECRET_KEY"))
-
-
-# Carregar as variáveis do .env
-load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
@@ -87,20 +84,53 @@ def proccomp():
 def home_page():
     return render_template('home.html')
 
+# Definir as variáveis de ambiente
+AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN')
+CLIENT_ID = os.getenv('CLIENT_ID')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+REDIRECT_URI = os.getenv('REDIRECT_URI')
+
+app = Flask(__name__)
+
 @app.route('/login')
 def login():
     return redirect(
-        "https://dev-tw7648ler51b10s7.eu.auth0.com/authorize?response_type=code&client_id=g2xJF8I0C3CWAm9DicdayFUpHjXAQ0oI&redirect_uri=https://programacao-avancada-com-python-10794.vercel.app/login/callback"
+        f'https://{AUTH0_DOMAIN}/authorize?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}'
     )
 
+@app.route('/login/callback')
+def callback():
+    # Captura o código de autorização enviado pelo Auth0
+    code = request.args.get('code')
 
-@app.route('/logout')
-def logout():
-    # Redireciona o usuário para o logout no Auth0
-    return redirect(
-        'https://dev-tw7648ler51b10s7.eu.auth0.com/v2/logout?returnTo=https://programacao-avancada-com-python-10794.vercel.app/login'
-    )
+    # Troca o código por um token de acesso
+    token_url = f'https://{AUTH0_DOMAIN}/oauth/token'
+    headers = {'Content-Type': 'application/json'}
+    payload = {
+        'grant_type': 'authorization_code',
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'code': code,
+        'redirect_uri': REDIRECT_URI
+    }
 
+    # Solicitação POST para obter o token
+    response = requests.post(token_url, headers=headers, data=json.dumps(payload))
+
+    if response.status_code == 200:
+        # Se o token foi obtido com sucesso, redireciona para a página de sucesso ou dashboard
+        tokens = response.json()
+        access_token = tokens.get('access_token')
+        id_token = tokens.get('id_token')
+
+        # Aqui você pode salvar os tokens na sessão ou fazer algo com eles
+        return redirect('/dashboard')
+    else:
+        return f"Erro ao obter o token: {response.status_code}"
+
+@app.route('/dashboard')
+def dashboard():
+    return "Você está autenticado e agora pode acessar o dashboard."
 
 
 # Endpoint para criação de usuários (POST)
