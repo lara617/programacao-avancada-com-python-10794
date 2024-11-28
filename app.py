@@ -89,7 +89,7 @@ def home_page():
 
 @app.route('/login')
 def login():
-    return redirect("http://127.0.0.1:3000/login")    # Certifique-se de que o server.py está rodando
+    return redirect("https://programacao-avancada-com-python-10794-38kmwqf65.vercel.app/login")    # Certifique-se de que o server.py está rodando
 
 @app.route('/logout')
 def logout():
