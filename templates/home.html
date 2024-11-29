@@ -60,7 +60,7 @@
     </nav>
 
     <div class="container welcome-container">
-        {% if session %}
+        {% if session.userinfo %}
             <h1 class="welcome-title">Bem-vindo(a), {{ session.userinfo.name }}!</h1>
             <img src="{{ session.userinfo.picture }}" class="welcome-image" alt="Foto de Perfil">
             <div class="card mt-4">
@@ -74,8 +74,7 @@
                 </div>
             </div>
         {% else %}
-            
-           
+            <p>Você não está logado.</p>
         {% endif %}
     </div>
 </body>
